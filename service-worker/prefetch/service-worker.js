@@ -28,17 +28,20 @@ importScripts('../serviceworker-cache-polyfill.js');
 // cache, then increment the CACHE_VERSION value. It will kick off the service worker update
 // flow and the old cache(s) will be purged as part of the activate event handler when the
 // updated service worker is activated.
-var CACHE_VERSION = 1;
+var CACHE_VERSION = 4;
 var CURRENT_CACHES = {
   prefetch: 'prefetch-cache-v' + CACHE_VERSION
 };
 
 self.addEventListener('install', function(event) {
+  console.log(event);
   var urlsToPrefetch = [
+    './',
+    '../../styles/main.css',
     './static/pre_fetched.txt',
     './static/pre_fetched.html',
     // This is an image that will be used in pre_fetched.html
-    'https://www.chromium.org/_/rsrc/1302286216006/config/customLogo.gif'
+    //'https://www.chromium.org/_/rsrc/1302286216006/config/customLogo.gif'
   ];
 
   // All of these logging statements should be visible via the "Inspect" interface
@@ -47,6 +50,7 @@ self.addEventListener('install', function(event) {
 
   event.waitUntil(
     caches.open(CURRENT_CACHES['prefetch']).then(function(cache) {
+      console.log(cache);
       cache.addAll(urlsToPrefetch.map(function(urlToPrefetch) {
         // It's very important to use {mode: 'no-cors'} if there is any chance that
         // the resources being fetched are served off of a server that doesn't support
@@ -70,6 +74,9 @@ self.addEventListener('install', function(event) {
 });
 
 self.addEventListener('activate', function(event) {
+  debugger;
+  console.log(event);
+  console.log("activateactivateactivateactivate");
   // Delete all caches that aren't named in CURRENT_CACHES.
   // While there is only one cache in this example, the same logic will handle the case where
   // there are multiple versioned caches.
@@ -93,6 +100,8 @@ self.addEventListener('activate', function(event) {
 });
 
 self.addEventListener('fetch', function(event) {
+  console.log(event);
+  console.log(event.request);
   console.log('Handling fetch event for', event.request.url);
 
   event.respondWith(
